@@ -5,6 +5,6 @@
  * @access public
  * @default
  */
-const CALL_API = Symbol('Call API');
+const CALL_API = 'redux-api-middleware/CALL_API';
 
 export default CALL_API;
