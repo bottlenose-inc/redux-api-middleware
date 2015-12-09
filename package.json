@@ -4,7 +4,7 @@
   "description": "Redux middleware for calling an API.",
   "main": "lib/index.js",
   "scripts": {
-    "build": "./node_modules/.bin/babel src --out-dir lib",
+    "build": "npm i; ./node_modules/.bin/babel src --out-dir lib",
     "clean": "rimraf lib coverage",
     "cover": "babel-node ./node_modules/.bin/babel-istanbul cover test/index.js | tap-spec",
     "lint": "eslint src test",
