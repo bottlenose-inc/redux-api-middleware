@@ -63,7 +63,8 @@ function validateRSAA(action) {
     'headers',
     'credentials',
     'bailout',
-    'types'
+    'types',
+    'canQueue'
   ];
   const validMethods = [
     'GET',

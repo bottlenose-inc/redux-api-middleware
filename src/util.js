@@ -92,4 +92,10 @@ async function actionWith(descriptor, args) {
   return descriptor;
 }
 
-export { getJSON, normalizeTypeDescriptors, actionWith };
+function delay(time) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+}
+
+export { getJSON, normalizeTypeDescriptors, actionWith, delay };

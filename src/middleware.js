@@ -4,7 +4,8 @@ import isPlainObject from 'lodash.isplainobject';
 import CALL_API from './CALL_API';
 import { isRSAA, validateRSAA } from './validation';
 import { InvalidRSAA, RequestError, ApiError } from './errors' ;
-import { getJSON, normalizeTypeDescriptors, actionWith } from './util';
+import { getJSON, normalizeTypeDescriptors, actionWith, delay } from './util';
+
 
 /**
  * A Redux middleware that processes RSAA actions.
@@ -12,8 +13,14 @@ import { getJSON, normalizeTypeDescriptors, actionWith } from './util';
  * @type {ReduxMiddleware}
  * @access public
  */
-function apiMiddleware({ getState }) {
-  return (next) => async (action) => {
+function apiMiddleware(options) {
+  options = {
+    queuedRetries: 100,      // how many times to retry a queued response before giving up
+    queuePollInterval: 3000, // how often to poll queued analytics in MS
+    ...options
+  };
+
+  return (({ getState }) => (next) => async (action) => {
     // Do not process actions without a [CALL_API] property
     if (!isRSAA(action)) {
       return next(action);
@@ -40,7 +47,7 @@ function apiMiddleware({ getState }) {
     // Parse the validated RSAA action
     const callAPI = action[CALL_API];
     var { endpoint, headers } = callAPI;
-    const { method, body, credentials, bailout, types } = callAPI;
+    const { method, body, credentials, bailout, types, canQueue } = callAPI;
     const [requestType, successType, failureType] = normalizeTypeDescriptors(types);
 
     // Should we bail out?
@@ -102,7 +109,9 @@ function apiMiddleware({ getState }) {
 
     try {
       // Make the API call
-      var res = await fetch(endpoint, { method, body, credentials, headers });
+      var fn = canQueue ? fetchPollingQueued : fetch;
+
+      var res = await fn(endpoint, { method, body, credentials, headers }, options);
     } catch(e) {
       // The request was malformed, or there was a network error
       return next(await actionWith(
@@ -130,6 +139,25 @@ function apiMiddleware({ getState }) {
         [action, getState(), res]
       ));
     }
+  });
+}
+
+async function fetchPollingQueued(endpoint, { method, body, credentials, headers }, options) {
+  // if response is { queued: true }, poll every n seconds until we get a
+  // real response
+  let retries = options.queuedRetries;
+  while (retries--) {
+    var res = await fetch(endpoint, { method, body, credentials, headers });
+
+    try {
+      var json = await res.clone().json();
+      if (json.queued) {
+        await delay(options.queuePollInterval);
+        continue;
+      }
+    } catch (e) { /* ignore and continue */}
+
+    return res;
   }
 }
 
