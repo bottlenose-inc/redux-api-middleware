@@ -145,17 +145,17 @@ function apiMiddleware(options) {
 async function fetchPollingQueued(endpoint, { method, body, credentials, headers }, options) {
   // if response is { queued: true }, poll every n seconds until we get a
   // real response
+
   let retries = options.queuedRetries;
   while (retries--) {
     var res = await fetch(endpoint, { method, body, credentials, headers });
 
-    try {
-      var json = await res.clone().json();
-      if (json.queued) {
-        await delay(options.queuePollInterval);
-        continue;
-      }
-    } catch (e) { /* ignore and continue */}
+    var status = await res.clone().status;
+
+    if (status === 202) {
+      await delay(options.queuePollInterval);
+      continue;
+    }
 
     return res;
   }
