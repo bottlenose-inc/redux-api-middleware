@@ -800,7 +800,7 @@ test('actionWith', async (t) => {
 
 test('apiMiddleware must be a Redux middleware', (t) => {
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = () => {};
   const actionHandler = nextHandler(doNext);
 
@@ -840,7 +840,7 @@ test('apiMiddleware must be a Redux middleware', (t) => {
 test('apiMiddleware must pass actions without a [CALL_API] property to the next handler', (t) => {
   const anAction = {};
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.pass('next handler called');
     t.equal(
@@ -862,7 +862,7 @@ test('apiMiddleware must dispatch an error request FSA for an invalid RSAA with 
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.pass('next handler called');
     t.equal(
@@ -902,7 +902,7 @@ test('apiMiddleware must dispatch an error request FSA for an invalid RSAA with 
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.pass('next handler called');
     t.equal(
@@ -936,7 +936,7 @@ test('apiMiddleware must do nothing for an invalid RSAA without a request type',
     [CALL_API]: {}
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.fail('next handler called');
   };
@@ -967,7 +967,7 @@ test('apiMiddleware must dispatch an error request FSA when [CALL_API].bailout f
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.pass('next handler called');
     t.equal(
@@ -1013,7 +1013,7 @@ test('apiMiddleware must dispatch an error request FSA when [CALL_API].endpoint 
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.pass('next handler called');
     t.equal(
@@ -1060,7 +1060,7 @@ test('apiMiddleware must dispatch an error request FSA when [CALL_API].headers f
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.pass('next handler called');
     t.equal(
@@ -1110,7 +1110,7 @@ test('apiMiddleware must dispatch an error request FSA on a request error', (t) 
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     switch (action.type) {
     case 'REQUEST':
@@ -1175,7 +1175,7 @@ test('apiMiddleware must use a [CALL_API].bailout boolean when present', (t) => 
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.fail('next handler called');
   };
@@ -1201,7 +1201,7 @@ test('apiMiddleware must use a [CALL_API].bailout function when present', (t) =>
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     t.fail('next handler called');
   };
@@ -1226,7 +1226,7 @@ test('apiMiddleware must use an [CALL_API].endpoint function when present', (t) 
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {};
   const actionHandler = nextHandler(doNext);
 
@@ -1249,7 +1249,7 @@ test('apiMiddleware must use an [CALL_API].headers function when present', (t) =
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {};
   const actionHandler = nextHandler(doNext);
 
@@ -1280,7 +1280,7 @@ test('apiMiddleware must dispatch a success FSA on a successful API call with a 
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     switch (action.type) {
     case 'REQUEST':
@@ -1348,7 +1348,7 @@ test('apiMiddleware must dispatch a success FSA on a successful API call with an
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     switch (action.type) {
     case 'REQUEST':
@@ -1416,7 +1416,7 @@ test('apiMiddleware must dispatch a success FSA on a successful API call with a 
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     switch (action.type) {
     case 'REQUEST':
@@ -1485,7 +1485,7 @@ test('apiMiddleware must dispatch a failure FSA on an unsuccessful API call with
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     switch (action.type) {
     case 'REQUEST':
@@ -1553,7 +1553,7 @@ test('apiMiddleware must dispatch a failure FSA on an unsuccessful API call with
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     switch (action.type) {
     case 'REQUEST':
@@ -1621,7 +1621,7 @@ test('apiMiddleware must dispatch a failure FSA on an unsuccessful API call with
     }
   };
   const doGetState = () => {};
-  const nextHandler = apiMiddleware({ getState: doGetState });
+  const nextHandler = apiMiddleware()({ getState: doGetState });
   const doNext = (action) => {
     switch (action.type) {
     case 'REQUEST':
