@@ -15,8 +15,15 @@ import { getJSON, normalizeTypeDescriptors, actionWith, delay } from './util';
  */
 function apiMiddleware(options) {
   options = {
-    queuedRetries: 100,      // how many times to retry a queued response before giving up
-    queuePollInterval: 3000, // how often to poll queued analytics in MS
+    // how many times to retry a queued response before giving up
+    queuedRetries: 100,
+    // how often to poll queued analytics. if falloff disabled, this is the polling interval (ms))
+    maximumPollInterval: 3000,
+    // initial retry time w/ falloff
+    minimumPollInterval: 50,
+    falloff: true,
+    // steps between min and max
+    falloffSteps: 5,
     ...options
   };
 
@@ -142,18 +149,30 @@ function apiMiddleware(options) {
   });
 }
 
+function falloff(min, max, steps, i) {
+  return Math.min(min + ((max - min) / steps) * i, max);
+}
+
 async function fetchPollingQueued(endpoint, { method, body, credentials, headers }, options) {
   // if response is { queued: true }, poll every n seconds until we get a
   // real response
 
   let retries = options.queuedRetries;
+
   while (retries--) {
+    let retriesSoFar = options.queuedRetries - retries - 1;
+    let pollDelay = options.falloff
+      ? falloff(
+          options.minimumPollInterval, options.maximumPollInterval, options.falloffSteps, retriesSoFar
+        )
+      : options.maximumPollInterval;
+
     var res = await fetch(endpoint, { method, body, credentials, headers });
 
     var status = await res.clone().status;
 
     if (status === 202) {
-      await delay(options.queuePollInterval);
+      await delay(pollDelay);
       continue;
     }
 
